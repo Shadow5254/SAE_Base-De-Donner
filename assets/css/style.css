@@ -1,0 +1,336 @@
+/* Reset : on supprime les styles par défaut du navigateur */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --encre: #e4f1ec; /* texte principal */
+    --fond: #0b1f1d; /* fond de page : vert très sombre */
+    --carte: #12302c; /* cartes, tableaux */
+    --vert: #3ddc97; /* accent principal : vert feuille */
+    --bleu: #4fd1c5; /* accent secondaire : turquoise (liens) */
+    --trait: #2a504a; /* bordures */
+    --code: #0e2724; /* blocs SQL, en-têtes de tableau */
+    color-scheme: dark;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.65;
+    color: var(--encre);
+    background: var(--fond);
+}
+
+a {
+    color: var(--bleu);
+}
+
+/* Mise en page générale avec CSS Grid */
+.page {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    grid-template-areas:
+    "entete entete"
+    "menu contenu"
+    "pied pied";
+    min-height: 100vh;
+}
+
+header {
+    grid-area: entete;
+    padding: 2.5rem 2rem 1.8rem 260px;
+    border-bottom: 1px solid var(--trait);
+}
+
+header .projet {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--bleu);
+}
+
+header h1 {
+    font-size: 2.4rem;
+    line-height: 1.12;
+}
+
+header p + p, header h1 + p {
+    margin-top: 0.8rem;
+    max-width: 62rem;
+}
+
+/* Équipe et listes de cartes de l’accueil */
+.equipe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 2rem;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.cartes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.cartes li {
+    width: 250px;
+    flex-wrap: wrap;
+    background: var(--carte);
+    border: 1px solid var(--trait);
+    border-top: 5px solid var(--vert);
+    padding: 1rem;
+}
+
+.cartes a {
+    font-weight: bold;
+}
+
+.cartes li strong, .cartes li a {
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+nav {
+    grid-area: menu;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100vh;
+    padding: 1.5rem;
+    border-right: 1px solid var(--trait);
+    background: var(--fond);
+}
+
+nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--encre);
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: var(--vert);
+    text-decoration: underline;
+}
+
+nav a.courant {
+    color: var(--vert);
+    border-bottom: 3px solid var(--vert);
+}
+
+main {
+    grid-area: contenu;
+    padding: 1rem 2rem 3rem;
+    max-width: 900px;
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin: 2rem 0 0.6rem;
+}
+
+h3 {
+    font-size: 1.15rem;
+    margin: 1.2rem 0 0.4rem;
+}
+
+p + p, p + ul, p + ol, ul + p, ol + p, p + figure, figure + p {
+    margin-top: 0.8rem;
+}
+
+ul, ol {
+    padding-left: 1.4rem;
+}
+
+footer {
+    grid-area: pied;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--trait);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Fiches d’indicateurs */
+.carte {
+    background: var(--carte);
+    border: 1px solid var(--trait);
+    border-left: 6px solid var(--vert);
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+}
+
+.cartes li strong {
+    color: #e0b84c;
+}
+
+.carte h2 {
+    margin-top: 0;
+}
+
+.interet {
+    color: var(--bleu);
+    font-weight: bold;
+}
+
+pre {
+    background: var(--code);
+    padding: 1rem;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+figure {
+    margin: 1rem 0;
+}
+
+figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: var(--carte);
+    border: 2px solid var(--trait);
+    border-radius: 4px;
+}
+
+figcaption {
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.defile {
+    margin: 0.8rem 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--carte);
+}
+
+caption {
+    text-align: left;
+    font-weight: bold;
+    padding-bottom: 0.4rem;
+}
+
+th, td {
+    border: 1px solid var(--trait);
+    padding: 0.4rem 0.7rem;
+    text-align: left;
+}
+
+th {
+    background: var(--code);
+}
+
+nav a:visited {
+    color: var(--encre);
+}
+
+a:visited {
+    color: #8fd9c9;
+}
+
+a:focus-visible {
+    outline: 3px solid var(--vert);
+    outline-offset: 3px;
+}
+
+
+/* Écrans étroits : une colonne et menu fixé en haut */
+@media (max-width: 800px) {
+    .page {
+        grid-template-columns: 1fr;
+        grid-template-areas: "entete" "menu" "contenu" "pied";
+    }
+
+    header {
+        padding: 8rem 1.2rem 1.2rem;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        z-index: 10;
+        border-right: none;
+        border-bottom: 1px solid var(--trait);
+        padding: 0.7rem 1rem;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.3rem 1rem;
+    }
+
+    nav a {
+        display: block;
+    }
+
+    main {
+        padding: 1rem 1.2rem 2rem;
+    }
+
+    .cartes li {
+        width: 100%;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Accessibilité et affichage mobile */
+.lien-evitement {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.lien-evitement:focus {
+    position: fixed;
+    left: 1rem;
+    top: 1rem;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1rem;
+    background: var(--carte);
+    color: var(--encre);
+    z-index: 1000;
+}
+
+.defile {
+    max-width: 100%;
+    overflow-x: auto;
+}
