@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Contexte et base | KDou</title>
+    <meta name="description"
+          content="KDou : rapport de SAÉ sur la base de données, les requêtes SQL et les indicateurs commerciaux."/>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="lien-evitement" href="#contenu">Aller au contenu principal</a>
+<div class="page">
+    <header>
+        <p class="projet">SAÉ S1.04 · BUT Informatique · Groupe 109</p>
+        <h1>Contexte et base de données</h1>
+        <p>Le fonctionnement de KDou, la structure de sa base et les formules utilisées.</p>
+    </header>
+    <nav aria-label="Navigation principale">
+        <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a class="courant" aria-current="page" href="contexte.html">Contexte et base</a></li>
+            <li><a href="exploration.html">Exploration</a></li>
+            <li><a href="indicateurs.html">Indicateurs collectifs</a></li>
+            <li><a href="personnels.html">Indicateurs personnels</a></li>
+            <li><a href="qualite.html">Qualité des données</a></li>
+            <li><a href="conclusion.html">Conclusion</a></li>
+        </ul>
+    </nav>
+    <main id="contenu">
+        <h2>Contexte</h2>
+        <p>KDou achète des produits d’épicerie fine à des fournisseurs du monde entier et les vend à des clients situés
+            en France. Chaque produit appartient à une seule catégorie et à un seul fournisseur. Un client peut passer
+            plusieurs commandes, chacune contenant un ou plusieurs produits.</p>
+        <p>KDou a aussi mis en relation des clients proches : certains, appelés pilotes, coordonnent un réseau de
+            clients partenaires pour grouper les livraisons.</p>
+        <h2>Schéma de la base de données</h2>
+        <figure><img
+                alt="Schéma relationnel Access fourni : Clientele_1 est une seconde occurrence de la table Clientele utilisée pour représenter le lien entre un client partenaire et son client pilote ; les autres tables sont reliées par leurs clés étrangères."
+                height="492" src="assets/images/schema-relationnel.png" width="1327"/>
+            <figcaption>Schéma relationnel mis à jour à partir de la capture Access fournie. Clientele_1 représente la
+                même table Clientele, utilisée une seconde fois dans Access pour afficher la relation réflexive
+                CodeCliPart : un client pilote peut être associé à plusieurs clients partenaires. Cette occurrence ne
+                constitue pas une table supplémentaire dans le modèle relationnel.
+            </figcaption>
+        </figure>
+        <div class="defile">
+            <table>
+                <caption>Clés primaires, clés candidates et clés étrangères</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Table</th>
+                    <th scope="col">Clé primaire</th>
+                    <th scope="col">Clé candidate supplémentaire identifiée</th>
+                    <th scope="col">Clés étrangères</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">Clientele</th>
+                    <td>CodeCli</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>NoPays → Pays ; CodeCliPart → Clientele (client pilote)</td>
+                </tr>
+                <tr>
+                    <th scope="row">Commande</th>
+                    <td>N° commande</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>CodeCli → Clientele</td>
+                </tr>
+                <tr>
+                    <th scope="row">DetailCommande</th>
+                    <td>N° commande + Réf produit</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>N° commande → Commande ; Réf produit → Produit</td>
+                </tr>
+                <tr>
+                    <th scope="row">Produit</th>
+                    <td>RefProd</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>NoFour → Fournisseur ; CodeCateg → Categorie</td>
+                </tr>
+                <tr>
+                    <th scope="row">Categorie</th>
+                    <td>CodeCateg</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>aucune</td>
+                </tr>
+                <tr>
+                    <th scope="row">Fournisseur</th>
+                    <td>NoFour</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>NoPays → Pays</td>
+                </tr>
+                <tr>
+                    <th scope="row">Pays</th>
+                    <td>NoPays</td>
+                    <td>Non identifiée dans les documents disponibles</td>
+                    <td>aucune</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>Lecture de la relation entre les clients</h2>
+        <p>La relation entre <code>Clientele.CodeCliPart</code> et <code>Clientele.CodeCli</code> est une relation
+            réflexive : les deux côtés correspondent à la même table. Dans la fenêtre des relations d’Access, cette
+            table apparaît deux fois sous les noms <code>Clientele</code> et <code>Clientele_1</code>. Le champ <code>CodeCliPart</code>
+            de la table Clientele référence le code du client pilote. Il ne faut donc pas compter Clientele_1 comme une
+            table indépendante.</p>
+        <h2>Prix de vente et chiffre d’affaires</h2>
+        <p>Le prix de vente est le coût d’achat multiplié par le coefficient de marge de la catégorie. Ce coefficient
+            inclut le coût fournisseur, le transport et le stockage.</p>
+        <p>Le chiffre d’affaires d’une ligne de commande se calcule ainsi : <code>quantité × coût d’achat × coefficient
+            de marge × (1 − remise)</code>. La remise est stockée en fraction (0,05 pour 5 %). Les frais de port ne sont
+            pas comptés dans le chiffre d’affaires des produits.</p>
+        <h2>Méthode de travail sous Access</h2>
+        <ul>
+            <li>Chaque requête est écrite en mode SQL d’Access, puis exécutée sur la base de la SAÉ.</li>
+            <li>Chaque résultat est une capture d’écran de la feuille de données Access, présentée avec sa requête.</li>
+            <li>Une requête peut en utiliser une autre : l’indicateur de partenariat s’appuie sur une requête
+                enregistrée qui compte les commandes de chaque client.
+            </li>
+            <li>Les doublons sans intérêt sont supprimés avec DISTINCT, et les résultats sont triés avec ORDER BY.</li>
+        </ul>
+        <h2>Organisation du site</h2>
+        <p>Les fichiers statiques sont regroupés dans le dossier <code>assets/</code>. Le sous-dossier
+            <code>assets/css/</code> contient la feuille de style et <code>assets/images/</code> contient le schéma
+            relationnel et les captures des résultats. Cette séparation permet de retrouver plus facilement les fichiers
+            selon leur rôle.</p>
+        <p>Une seule feuille de style, <code>assets/css/style.css</code>, est utilisée par toutes les pages afin de
+            conserver la même charte graphique. Le menu de navigation reprend les mêmes liens et le même ordre sur les
+            sept pages, ce qui facilite le déplacement dans le rapport.</p>
+    </main>
+    <footer>Projet KDou · SAÉ S1.04 – Création et interrogation d’une base de données · IUT de Paris – Rives de Seine ·
+        2026
+    </footer>
+</div>
+</body>
+</html>

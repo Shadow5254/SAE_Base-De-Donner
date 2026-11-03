@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Indicateurs collectifs | KDou</title>
+    <meta name="description"
+          content="KDou : rapport de SAÉ sur la base de données, les requêtes SQL et les indicateurs commerciaux."/>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<a class="lien-evitement" href="#contenu">Aller au contenu principal</a>
+<div class="page">
+    <header>
+        <p class="projet">SAÉ S1.04 · BUT Informatique · Groupe 109</p>
+        <h1>Indicateurs collectifs</h1>
+        <p>Origine des ventes, santé, offre commerciale et partenariat entre clients : quatre indicateurs pour guider
+            KDou.</p>
+    </header>
+    <nav aria-label="Navigation principale">
+        <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="contexte.html">Contexte et base</a></li>
+            <li><a href="exploration.html">Exploration</a></li>
+            <li><a class="courant" aria-current="page" href="indicateurs.html">Indicateurs collectifs</a></li>
+            <li><a href="personnels.html">Indicateurs personnels</a></li>
+            <li><a href="qualite.html">Qualité des données</a></li>
+            <li><a href="conclusion.html">Conclusion</a></li>
+        </ul>
+    </nav>
+    <main id="contenu">
+        <p>Quatre indicateurs mesurent l’origine des ventes, la santé, l’offre et les réseaux de clients. Ils s’appuient
+            sur la formule du chiffre d’affaires : <code>quantité × coût d’achat × coefficient de marge × (1 −
+                remise)</code>, avec une remise stockée en fraction.</p>
+        <article class="carte"><h2>Origine : chiffre d’affaires avec les fournisseurs de l’UE</h2>
+            <p><strong>Énoncé :</strong> quel est le chiffre d’affaires total généré à ce jour avec les fournisseurs
+                situés dans l’Union européenne ?</p>
+            <p><strong>Objectif :</strong> mesurer la part des ventes qui repose sur des approvisionnements européens,
+                donc potentiellement plus proches.</p>
+            <p class="interet"><strong>Intérêt pour KDou :</strong> savoir quelle part de l’activité dépend de
+                fournisseurs de l’UE et où des achats plus proches seraient possibles, pour réduire les distances de
+                transport.</p>
+            <p><strong>Construction :</strong> FROM : DetailCommande, Produit, Categorie, Fournisseur et Pays. WHERE :
+                la colonne UE du pays vaut "Membre" (l’autre valeur est "Hors"). SELECT : somme du chiffre d’affaires de
+                chaque ligne. La France est membre de l’UE : elle est incluse.</p>
+            <pre><code>SELECT Sum(D.[Quantité] * P.CoutAchat * Ca.CoefMarge * (1 - D.[Remise (%)])) AS CA_Fournisseurs_UE
+FROM (((DetailCommande AS D INNER JOIN Produit AS P ON D.[Réf produit] = P.RefProd)
+      INNER JOIN Categorie AS Ca ON P.CodeCateg = Ca.CodeCateg)
+      INNER JOIN Fournisseur AS F ON P.NoFour = F.NoFour)
+      INNER JOIN Pays AS Pa ON F.NoPays = Pa.NoPays
+WHERE Pa.UE = "Membre";</code></pre>
+            <figure><img alt="Résultat Access : chiffre d’affaires avec les fournisseurs de l’UE" height="130"
+                         src="assets/images/resultat_indicateur_2.png" width="311"/>
+                <figcaption>Chiffre d’affaires total avec les fournisseurs de l’UE : 2 754 529,74 €.</figcaption>
+            </figure>
+            <div class="defile">
+                <table>
+                    <caption>Chiffre d’affaires selon l’origine des fournisseurs</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Origine</th>
+                        <th scope="col">Chiffre d’affaires</th>
+                        <th scope="col">Part du total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">UE (France incluse)</th>
+                        <td>2 754 529,74 €</td>
+                        <td>55,5 %</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">dont France</th>
+                        <td>782 955,62 €</td>
+                        <td>15,8 %</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Hors UE</th>
+                        <td>2 208 860,08 €</td>
+                        <td>44,5 %</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="defile">
+                <table>
+                    <caption>Détail du chiffre d’affaires par pays du fournisseur</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Pays</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Chiffre d’affaires</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">Allemagne</th>
+                        <td>Membre de l’UE</td>
+                        <td>874 354,40 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">France</th>
+                        <td>Membre de l’UE</td>
+                        <td>782 955,62 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Australie</th>
+                        <td>Hors UE</td>
+                        <td>657 683,01 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Italie</th>
+                        <td>Membre de l’UE</td>
+                        <td>582 104,68 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Canada</th>
+                        <td>Hors UE</td>
+                        <td>484 957,09 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">États-Unis</th>
+                        <td>Hors UE</td>
+                        <td>344 411,22 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Japon</th>
+                        <td>Hors UE</td>
+                        <td>236 730,37 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Finlande</th>
+                        <td>Membre de l’UE</td>
+                        <td>207 189,57 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Royaume-Uni</th>
+                        <td>Hors UE</td>
+                        <td>199 316,65 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Suède</th>
+                        <td>Membre de l’UE</td>
+                        <td>178 645,62 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Norvège</th>
+                        <td>Hors UE</td>
+                        <td>141 081,25 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Singapour</th>
+                        <td>Hors UE</td>
+                        <td>95 011,31 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Espagne</th>
+                        <td>Membre de l’UE</td>
+                        <td>91 308,70 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Brésil</th>
+                        <td>Hors UE</td>
+                        <td>49 669,17 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Danemark</th>
+                        <td>Membre de l’UE</td>
+                        <td>28 751,28 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Pays-Bas</th>
+                        <td>Membre de l’UE</td>
+                        <td>9 219,88 €</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Interprétation :</strong> 55,5 % du chiffre d’affaires (2 754 529,74 € sur 4 963 389,82 €) vient
+                de fournisseurs de l’UE, dont 15,8 % de la France seule. Les fournisseurs hors UE pèsent 44,5 %, surtout
+                l’Australie, le Canada et les États-Unis, donc des trajets longs. C’est là que des fournisseurs
+                européens équivalents réduiraient le plus les distances.</p></article>
+        <article class="carte"><h2>Santé : chiffre d’affaires annuel des desserts et des boissons</h2>
+            <p><strong>Énoncé :</strong> quel chiffre d’affaires annuel génèrent ensemble les catégories desserts et
+                boissons ?</p>
+            <p><strong>Objectif :</strong> suivre le poids des produits sucrés dans les ventes, année par année.</p>
+            <p class="interet"><strong>Intérêt pour KDou :</strong> mesurer la part des desserts et boissons dans
+                l’activité, pour décider s’il faut la limiter ou la compenser par des produits plus sains.</p>
+            <p><strong>Construction :</strong> FROM : Commande, DetailCommande, Produit et Categorie. WHERE : catégorie
+                Desserts ou Boissons. GROUP BY : l’année de la commande. SELECT : somme du chiffre d’affaires. ORDER BY
+                : année.</p>
+            <pre><code>SELECT Year(Co.DateCde) AS Annee,
+       Sum(D.[Quantité] * P.CoutAchat * Ca.CoefMarge * (1 - D.[Remise (%)])) AS CA_Desserts_Boissons
+FROM ((Commande AS Co INNER JOIN DetailCommande AS D ON Co.[N° commande] = D.[N° commande])
+      INNER JOIN Produit AS P ON D.[Réf produit] = P.RefProd)
+      INNER JOIN Categorie AS Ca ON P.CodeCateg = Ca.CodeCateg
+WHERE Ca.NomCateg = "Desserts" OR Ca.NomCateg = "Boissons"
+GROUP BY Year(Co.DateCde)
+ORDER BY Year(Co.DateCde);</code></pre>
+            <figure><img alt="Résultat Access : chiffre d’affaires annuel des desserts et boissons" height="180"
+                         src="assets/images/resultat_indicateur_3.png" width="560"/>
+                <figcaption>Chiffre d’affaires annuel des desserts et boissons.</figcaption>
+            </figure>
+            <div class="defile">
+                <table>
+                    <caption>Chiffre d’affaires des desserts et boissons par année</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Année</th>
+                        <th scope="col">Chiffre d’affaires</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">2020</th>
+                        <td>169 221,75 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2021</th>
+                        <td>1 405 308,96 €</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2022</th>
+                        <td>1 389,50 €</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Interprétation :</strong> 2021 est la seule année complète : les desserts et boissons y
+                rapportent ensemble 1 405 308,96 €. Pour cette année, les boissons représentent 913 374 € et les
+                desserts
+                491 935 €. Les données vont de juillet 2020 à novembre 2022 ; 2020 est donc partielle et 2022 ne compte
+                que 5 commandes. La chute en 2022 ne signifie pas une baisse des ventes.</p></article>
+        <article class="carte"><h2>Offre : produits carnés jamais commandés</h2>
+            <p><strong>Énoncé :</strong> combien de produits carnés du catalogue n’ont jamais été commandés ?</p>
+            <p><strong>Objectif :</strong> repérer les références de viande qui ne se vendent pas.</p>
+            <p class="interet"><strong>Intérêt pour KDou :</strong> éviter de garder un stock inutile, source de
+                gaspillage et de coûts, et décider de retirer ou de limiter ces références.</p>
+            <p><strong>Construction :</strong> c’est une différence : produits de viande moins produits commandés. FROM
+                : Produit joint à Categorie, puis jointure externe gauche avec DetailCommande. WHERE : catégorie Viandes
+                et référence absente des commandes (IS NULL). SELECT : Count.</p>
+            <pre><code>SELECT Count(P.RefProd) AS NbProduitsCarnesNonCommandes
+FROM (Produit AS P INNER JOIN Categorie AS Ca ON P.CodeCateg = Ca.CodeCateg)
+     LEFT JOIN DetailCommande AS D ON P.RefProd = D.[Réf produit]
+WHERE Ca.NomCateg = "Viandes" AND D.[Réf produit] IS NULL;</code></pre>
+            <figure><img alt="Résultat Access : nombre de produits carnés jamais commandés" height="76"
+                         src="assets/images/resultat_indicateur_4.png" width="316"/>
+                <figcaption>Nombre de produits carnés jamais commandés.</figcaption>
+            </figure>
+            <p><strong>Interprétation :</strong> 2 produits de la catégorie Viandes n’ont jamais été commandés entre
+                juillet 2020 et novembre 2022. « Carné » désigne ici la catégorie Viandes, poissons exclus. Ces deux
+                références sont les premières à réexaminer.</p></article>
+        <article class="carte"><h2>Partenariat : pilotes et partenaires ayant autant de commandes</h2>
+            <p><strong>Énoncé :</strong> existe-t-il des clients pilotes ayant autant de commandes que leurs clients
+                partenaires ?</p>
+            <p><strong>Objectif :</strong> repérer les réseaux où pilote et partenaires sont aussi actifs les uns que
+                les autres.</p>
+            <p class="interet"><strong>Intérêt pour KDou :</strong> identifier les réseaux équilibrés, où les livraisons
+                groupées sont les plus naturelles, pour limiter les trajets et les émissions.</p>
+            <p><strong>Construction :</strong> en deux étapes. D’abord une requête enregistrée, R_NbCommandes_ParClient,
+                compte les commandes de chaque client. Ensuite la table Clientele est utilisée deux fois (pilote et
+                partenaire, reliés par CodeCliPart), jointe deux fois à cette requête.</p>
+            <p><strong>Clients sans commande :</strong> les jointures sont externes gauches, donc un client sans
+                commande reste dans le résultat avec un nombre de commandes vide. Nous le traitons comme 0 commande :
+                deux clients sans commande ont « autant » de commandes (0), ce que la clause OR … IS NULL gère. Aucun
+                couple de ce type n’apparaît ici.</p>
+            <h3>Étape 1 : commandes par client</h3>
+            <pre><code>SELECT Co.CodeCli, Count(Co.[N° commande]) AS NbCommandes
+FROM Commande AS Co
+GROUP BY Co.CodeCli;</code></pre>
+            <figure><img alt="Résultat Access : nombre de commandes de chaque client" height="856"
+                         src="assets/images/resultat_nb_commandes.png" width="327"/>
+                <figcaption>Nombre de commandes de chaque client (requête R_NbCommandes_ParClient).</figcaption>
+            </figure>
+            <h3>Étape 2 : comparaison entre pilote et partenaire</h3>
+            <pre><code>SELECT Pil.Societe AS SocietePilote, Par.Societe AS SocietePartenaire, N1.NbCommandes AS NbCommandes
+FROM ((Clientele AS Pil INNER JOIN Clientele AS Par ON Pil.CodeCli = Par.CodeCliPart)
+      LEFT JOIN R_NbCommandes_ParClient AS N1 ON Pil.CodeCli = N1.CodeCli)
+      LEFT JOIN R_NbCommandes_ParClient AS N2 ON Par.CodeCli = N2.CodeCli
+WHERE (N1.NbCommandes = N2.NbCommandes)
+   OR ((N1.NbCommandes IS NULL) AND (N2.NbCommandes IS NULL))
+ORDER BY Pil.Societe, Par.Societe;</code></pre>
+            <figure><img alt="Résultat Access : couple pilote et partenaire ayant autant de commandes" height="88"
+                         src="assets/images/resultat_indicateur_5.png" width="569"/>
+                <figcaption>Couple pilote et partenaire ayant le même nombre de commandes.</figcaption>
+            </figure>
+            <div class="defile">
+                <table>
+                    <caption>Couples pilote et partenaire avec le même nombre de commandes</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Pilote</th>
+                        <th scope="col">Partenaire</th>
+                        <th scope="col">Commandes de chacun</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Le Nostradamu</td>
+                        <td>Petite Épicerie</td>
+                        <td>17</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Interprétation :</strong> oui, mais un seul réseau est équilibré : Le Nostradamu et Petite
+                Épicerie ont passé 17 commandes chacun. C’est le meilleur candidat pour tester des livraisons groupées.
+            </p></article>
+    </main>
+    <footer>Projet KDou · SAÉ S1.04 – Création et interrogation d’une base de données · IUT de Paris – Rives de Seine ·
+        2026
+    </footer>
+</div>
+</body>
+</html>
